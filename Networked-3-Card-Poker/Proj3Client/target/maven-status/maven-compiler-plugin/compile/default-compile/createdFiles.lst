@@ -1,0 +1,8 @@
+PokerInfo.class
+ClientGUI.class
+WelcomePageController.class
+WinLoseController.class
+Card.class
+GameplayController.class
+Client.class
+Player.class
