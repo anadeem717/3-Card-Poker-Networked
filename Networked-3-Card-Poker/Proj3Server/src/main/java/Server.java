@@ -183,22 +183,30 @@ public class Server {
 
         // process pp / ante wins
         private void evaluateWins(ArrayList<Card> playerHand, ArrayList<Card> dealerHand, PokerInfo pokerInfo) {
-            int res = ThreeCardLogic.compareHands(playerHand, dealerHand);
-            int ppWinnings = ThreeCardLogic.evalPPWinnings(playerHand, pokerInfo.player.getPairPlusBet());
-            int ppRes = ThreeCardLogic.evalHand(playerHand);
 
-            String ppStringRes = "";
-            if (ppRes == 1) ppStringRes = "a STRAIGHT FLUSH";
-            else if (ppRes == 2) ppStringRes = "a 3 OF A KIND";
-            else if (ppRes == 3) ppStringRes = "a STRAIGHT";
-            else if (ppRes == 4) ppStringRes = "a FLUSH";
-            else if (ppRes == 5) ppStringRes = "a PAIR";
-            else {
-                ppStringRes = "NOTHING";
+            int ppWinnings = 0;
+            if (pokerInfo.player.getPairPlusBet() > 0) {
+                ppWinnings = ThreeCardLogic.evalPPWinnings(playerHand, pokerInfo.player.getPairPlusBet());
+                int ppRes = ThreeCardLogic.evalHand(playerHand);
+
+                String ppStringRes = "";
+                if (ppRes == 1) ppStringRes = "a STRAIGHT FLUSH";
+                else if (ppRes == 2) ppStringRes = "a 3 OF A KIND";
+                else if (ppRes == 3) ppStringRes = "a STRAIGHT";
+                else if (ppRes == 4) ppStringRes = "a FLUSH";
+                else if (ppRes == 5) ppStringRes = "a PAIR";
+                else {
+                    ppStringRes = "NOTHING";
+                }
+
+                callback.accept("Client " + this.count + " got " + ppStringRes +
+                        " from their Pair-Plus, they won $" + ppWinnings +
+                        " (profit = $" + (ppWinnings - pokerInfo.player.getPairPlusBet()) + ")");
             }
 
-            callback.accept("Client " + this.count + " got " + ppStringRes + " from their Pair-Plus, they won $" + ppWinnings);
             Player updatedPlayer = pokerInfo.player;
+
+            int res = ThreeCardLogic.compareHands(playerHand, dealerHand);
 
             String gameRes = "";
             int winnings = 0;
@@ -208,14 +216,14 @@ public class Server {
             } else if (res == 1) {
                 callback.accept("Client " + this.count + " lost to dealer!");
                 gameRes = "Dealer Win";
-                winnings = -(pokerInfo.player.getAnteBet() * 2);
+                winnings = -(pokerInfo.player.getAnteBet());
             } else {
                 callback.accept("Client " + this.count + " won against dealer!");
                 gameRes = "Player Win";
-                winnings = (pokerInfo.player.getAnteBet() * 2);
+                winnings = (pokerInfo.player.getAnteBet());
             }
 
-            updatedPlayer.updateWinnings(updatedPlayer.getTotalWinnings() + winnings + ppWinnings);
+            updatedPlayer.updateWinnings(winnings + (ppWinnings - pokerInfo.player.getPairPlusBet()));
 
             // send updated game info
             PokerInfo newInfo = new PokerInfo();

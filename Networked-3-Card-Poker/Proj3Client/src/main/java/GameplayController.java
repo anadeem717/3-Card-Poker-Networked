@@ -139,11 +139,6 @@ public class GameplayController {
     // Update game state when receiving info from server
     public void updateGameState(PokerInfo pokerInfo) {
         Platform.runLater(() -> {
-            if (pokerInfo.player != null) {
-                winningsLabel.setText("$" + pokerInfo.player.getTotalWinnings());
-            } else {
-                winningsLabel.setText("$0");
-            }
 
             gameInfoText.setText(pokerInfo.gameRes);
 
@@ -163,6 +158,12 @@ public class GameplayController {
                 dealer = pokerInfo.player;
             } else {
                 player = pokerInfo.player;
+            }
+
+            if (pokerInfo.player != null) {
+                winningsLabel.setText("$" + pokerInfo.player.getTotalWinnings());
+            } else {
+                winningsLabel.setText("$0");
             }
 
             if (dealer != null && player != null) {

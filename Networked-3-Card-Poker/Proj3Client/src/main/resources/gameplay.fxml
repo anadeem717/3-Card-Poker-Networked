@@ -10,7 +10,7 @@
         <VBox alignment="CENTER" maxWidth="600" spacing="20">
             <!-- Winnings display -->
             <HBox alignment="CENTER" spacing="10">
-                <Label text="Winnings: " />
+                <Label text="Total Profit: " />
                 <Label fx:id="winningsLabel" style="-fx-font-size: 18px; -fx-text-fill: blue;" text="'$0'" />
             </HBox>
 
