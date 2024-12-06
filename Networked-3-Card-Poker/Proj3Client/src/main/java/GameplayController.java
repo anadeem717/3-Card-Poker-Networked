@@ -30,7 +30,7 @@ public class GameplayController {
     private ClientGUI clientGUI;
     private ObjectOutputStream out;
     private boolean cardsDealt = false;
-    private Player player;
+    protected Player player;
     private Player dealer;
     boolean isWin;
 
@@ -108,6 +108,10 @@ public class GameplayController {
         // Disable play and fold buttons after folding
         playButton.setDisable(true);
         foldButton.setDisable(true);
+
+        // Reveal both player's and dealer's cards
+        cardsDealt = true;
+        findCardImages(player.getHand(), dealer.getHand());
     }
 
     // Generic method to send poker info
@@ -168,9 +172,9 @@ public class GameplayController {
     }
 
     // Reset winnings for fresh start
-    public void resetWinnings() {
-        winningsLabel.setText("$0");
-        gameInfoText.setText("Game Reset");
+    public void playAgain() {
+        winningsLabel.setText( "$" + String.valueOf(player.getTotalWinnings()));
+        gameInfoText.setText("Playing again");
         anteInput.clear();
         pairPlusInput.clear();
 
@@ -179,6 +183,16 @@ public class GameplayController {
         findCardImages(null, null);
         playButton.setDisable(true); // Disable the play button until bets are placed
         foldButton.setDisable(true); // Disable the fold button until bets are placed
+        placeBetsButton.setDisable(false);
+        summaryButton.setDisable(true);
+        summaryButton.setVisible(false);
+        isWin = false;
+
+
+        PokerInfo playAgain = new PokerInfo();
+        playAgain.player = player;
+        playAgain.gameRes = "Play Again";
+        clientGUI.sendPokerInfo(playAgain);
     }
 
     // Show an alert with a given title and message
@@ -255,4 +269,6 @@ public class GameplayController {
                 return String.valueOf(value);
         }
     }
+
+
 }

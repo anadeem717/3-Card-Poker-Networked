@@ -116,8 +116,27 @@ public class Server {
 
                     if (pokerInfo.gameRes.equals("Bets Placed")) {
                         processBets(pokerInfo);
-                    } else if (pokerInfo.gameRes.equals("Play") || pokerInfo.gameRes.equals("Fold")) {
+                    }
+
+                    else if (pokerInfo.gameRes.equals("Play") || pokerInfo.gameRes.equals("Fold")) {
                         processPlayFold(pokerInfo);
+                    }
+
+                    else if (pokerInfo.gameRes.equals("Play Again")) {
+                        callback.accept("Client #" + count + " chose to play again!");
+
+                        PokerInfo newDealerInfo = new PokerInfo();
+                        serverDealer.dealDealerHand();
+                        dealerHand = serverDealer.getHand();
+                        newDealerInfo.player.setHand(serverDealer.getHand());
+                        newDealerInfo.isDealer = true;
+                        sendPokerInfoToClient(newDealerInfo);
+
+                        PokerInfo newPlayerInfo = new PokerInfo();
+                        newPlayerInfo.player = pokerInfo.player;
+                        newPlayerInfo.player.setHand(serverDealer.dealHand());
+                        newPlayerInfo.isDealer = false;
+                        sendPokerInfoToClient(newPlayerInfo);
                     }
 
                 } catch (Exception e) {

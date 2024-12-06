@@ -91,7 +91,7 @@ public class ClientGUI extends Application {
             winLoseController = loader.getController();
 
             Scene gameplayScene = primaryStage.getScene(); // Save current gameplay scene
-            winLoseController.setPrimaryStage(primaryStage, gameplayScene);
+            winLoseController.setPrimaryStage(primaryStage, gameplayController,gameplayScene);
             winLoseController.showResult(isWin, winnings);
 
             primaryStage.setScene(new Scene(winLoseRoot, 800, 600));
@@ -103,10 +103,9 @@ public class ClientGUI extends Application {
 
     public void sendPokerInfo(PokerInfo pokerInfo) {
         try {
-            if (out != null) {
-                out.writeObject(pokerInfo);
-                out.flush();
-            }
+
+            out.writeObject(pokerInfo);
+
         } catch (Exception e) {
             showErrorAlert("Error", "Failed to send PokerInfo: " + e.getMessage());
         }
