@@ -5,8 +5,8 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="IntroController"
-      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
-    <Label text="Enter Port Number:"/>
-    <TextField fx:id="portInput"/>
-    <Button text="Start Server" onAction="#startServer"/>
+      spacing="15" alignment="CENTER" style="-fx-background-color: #D6EAF8; -fx-padding: 20; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, #000000, 5, 0.5, 0, 0);">
+    <Label text="Enter Port Number:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+    <TextField fx:id="portInput" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #ffffff; -fx-border-color: #2C3E50; -fx-border-radius: 5px;"/>
+    <Button text="Start Server" onAction="#startServer" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #2bcf02; -fx-text-fill: #000000; -fx-border-radius: 5px; -fx-padding: 10px 20px;"/>
 </VBox>

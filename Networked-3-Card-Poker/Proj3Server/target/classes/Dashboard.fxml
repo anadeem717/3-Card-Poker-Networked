@@ -5,8 +5,8 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="DashboardController"
-      spacing="10" style="-fx-padding: 20;">
-    <Label fx:id="clientCountLabel" text="Clients Connected: 0"/>
-    <ListView fx:id="serverLog"/>
-    <Button text="Stop Server" onAction="#stopServer"/>
+      spacing="15" style="-fx-background-color: #D6EAF8; -fx-padding: 20; -fx-border-radius: 10; -fx-effect: dropshadow(gaussian, #000000, 5, 0.5, 0, 0);">
+    <Label fx:id="clientCountLabel" text="Clients Connected: 0" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;"/>
+    <ListView fx:id="serverLog" style="-fx-background-color: #ffffff; -fx-border-color: #2C3E50; -fx-border-radius: 5px;"/>
+    <Button text="Stop Server" onAction="#stopServer" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #E74C3C; -fx-text-fill: #ffffff; -fx-border-radius: 5px; -fx-padding: 10px 20px;"/>
 </VBox>

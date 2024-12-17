@@ -56,7 +56,7 @@ public class Server {
                         clients.add(clientThread);
                     }
 
-                    callback.accept("Client " + count + " connected.");
+                    callback.accept("Client #" + count + " connected.");
                     updateClientCount(); // Update the label
                     count++;
                     clientThread.start();
@@ -80,10 +80,12 @@ public class Server {
         ObjectInputStream in;
         ObjectOutputStream out;
         ArrayList<Card> dealerHand;
+        Dealer dealer;
 
         ClientThread(Socket socket, int count) {
             this.connection = socket;
             this.count = count;
+            this.dealer = new Dealer();
         }
 
         public void run() {
@@ -95,18 +97,20 @@ public class Server {
                 System.out.println("Streams not open");
             }
 
+            // shuffle new deck
+            dealer.shuffleNewDeck();
 
             // Existing logic for dealing cards and communication
             PokerInfo dealerInfo = new PokerInfo();
-            serverDealer.dealDealerHand();
-            dealerInfo.player.setHand(serverDealer.getHand());
+            dealer.dealDealerHand();
+            dealerInfo.player.setHand(dealer.getHand());
             dealerInfo.isDealer = true;
             sendPokerInfoToClient(dealerInfo);
 
-            dealerHand = serverDealer.getHand();
+            dealerHand = dealer.getHand();
 
             PokerInfo playerInfo = new PokerInfo();
-            playerInfo.player.setHand(serverDealer.dealHand());
+            playerInfo.player.setHand(dealer.dealHand());
             playerInfo.isDealer = false;
             sendPokerInfoToClient(playerInfo);
 
@@ -123,20 +127,34 @@ public class Server {
                     }
 
                     else if (pokerInfo.gameRes.equals("Play Again")) {
-                        callback.accept("Client #" + count + " chose to play again!");
+                        callback.accept("Client #" + count + " is playing another hand!");
+                        playAgain(pokerInfo);
+                    }
+
+                    else if (pokerInfo.gameRes.equals("Next Hand")) {
+                        callback.accept("Client #" + count + " started the next hand!");
+
+                        // shuffle new deck
+                        dealer.shuffleNewDeck();
 
                         PokerInfo newDealerInfo = new PokerInfo();
-                        serverDealer.dealDealerHand();
-                        dealerHand = serverDealer.getHand();
-                        newDealerInfo.player.setHand(serverDealer.getHand());
+                        dealer.dealDealerHand();
+                        dealerHand = dealer.getHand();
+                        newDealerInfo.player.setHand(dealer.getHand());
                         newDealerInfo.isDealer = true;
                         sendPokerInfoToClient(newDealerInfo);
 
                         PokerInfo newPlayerInfo = new PokerInfo();
                         newPlayerInfo.player = pokerInfo.player;
-                        newPlayerInfo.player.setHand(serverDealer.dealHand());
+                        newPlayerInfo.gameRes = "Bets Pushed";
+                        newPlayerInfo.player.setHand(dealer.dealHand());
                         newPlayerInfo.isDealer = false;
                         sendPokerInfoToClient(newPlayerInfo);
+                    }
+
+                    else if (pokerInfo.gameRes.equals("Fresh Start")) {
+                        callback.accept("Client #" + count + " has reset their game!");
+                        playAgain(pokerInfo);
                     }
 
                 } catch (Exception e) {
@@ -150,41 +168,60 @@ public class Server {
             }
         }
 
+        private void playAgain(PokerInfo pokerInfo) {
+            // shuffle new deck
+            dealer.shuffleNewDeck();
+
+            PokerInfo newDealerInfo = new PokerInfo();
+            dealer.dealDealerHand();
+            dealerHand = dealer.getHand();
+            newDealerInfo.player.setHand(dealer.getHand());
+            newDealerInfo.isDealer = true;
+            sendPokerInfoToClient(newDealerInfo);
+
+            PokerInfo newPlayerInfo = new PokerInfo();
+            newPlayerInfo.player = pokerInfo.player;
+            newPlayerInfo.player.setHand(dealer.dealHand());
+            newPlayerInfo.isDealer = false;
+            sendPokerInfoToClient(newPlayerInfo);
+        }
+
 
         private void processPlayFold(PokerInfo pokerInfo) {
             if (pokerInfo.gameRes.equals("Play")) {
-                callback.accept("Client " + this.count + " chose to PLAY, they wagered: $" + pokerInfo.player.getAnteBet());
-                evaluateWins(pokerInfo.player.getHand(), dealerHand, pokerInfo);
-            } else if (pokerInfo.gameRes.equals("Fold")) {
-                callback.accept("Client " + this.count + " chose to FOLD. They lost: $" +
+
+                PokerInfo updatedPlayer = evaluatePPWinnings(pokerInfo.player.getHand(), pokerInfo);
+
+                if (ThreeCardLogic.handQualifies(dealerHand)) {
+                    callback.accept("Client #" + this.count + " chose to PLAY, they wagered: $" + updatedPlayer.player.getAnteBet());
+                    evaluateWins(updatedPlayer.player.getHand(), dealerHand, updatedPlayer);
+                }
+                else { // hand does not qualify
+                    PokerInfo dealerNotQualify = new PokerInfo();
+                    dealerNotQualify.gameRes = "Dealer does not qualify";
+                    dealerNotQualify.player = pokerInfo.player;
+                    dealerNotQualify.isDealer = false;
+                    callback.accept("Client #" + this.count + " dealer hand does not qualify, bets pushed");
+                    sendPokerInfoToClient(dealerNotQualify);
+                }
+            }
+
+            // folded
+            else if (pokerInfo.gameRes.equals("Fold")) {
+                callback.accept("Client #" + this.count + " chose to FOLD. They lost: $" +
                         (pokerInfo.player.getAnteBet() + pokerInfo.player.getPairPlusBet()));
+
+                pokerInfo.gameRes = "Player Fold";
+                pokerInfo.player.updateWinnings(-(pokerInfo.player.getAnteBet() + pokerInfo.player.getPairPlusBet()));
+                pokerInfo.isDealer = false; // Set to false if the response is for the player
+                sendPokerInfoToClient(pokerInfo);
             }
         }
 
-        public void sendPokerInfoToClient(PokerInfo pokerInfo) {
-            try {
-                out.writeObject(pokerInfo);
-                out.flush();  // Ensure the data is sent immediately
-            } catch (Exception e) {
-                callback.accept("Error sending PokerInfo to client: " + e.getMessage());
-            }
-        }
-
-        private void processBets(PokerInfo pokerInfo) {
-
-            if (pokerInfo.antePlaced) {
-                callback.accept("Client " + this.count + " placed an Ante Bet of $" + pokerInfo.player.getAnteBet());
-            }
-            if (pokerInfo.pairPlusPlaced) {
-                callback.accept("Client " + this.count + " placed an Pair-Plus Bet of $" + pokerInfo.player.getPairPlusBet());
-            }
-
-        }
-
-        // process pp / ante wins
-        private void evaluateWins(ArrayList<Card> playerHand, ArrayList<Card> dealerHand, PokerInfo pokerInfo) {
+        private PokerInfo evaluatePPWinnings(ArrayList<Card> playerHand, PokerInfo pokerInfo) {
 
             int ppWinnings = 0;
+
             if (pokerInfo.player.getPairPlusBet() > 0) {
                 ppWinnings = ThreeCardLogic.evalPPWinnings(playerHand, pokerInfo.player.getPairPlusBet());
                 int ppRes = ThreeCardLogic.evalHand(playerHand);
@@ -199,31 +236,82 @@ public class Server {
                     ppStringRes = "NOTHING";
                 }
 
-                callback.accept("Client " + this.count + " got " + ppStringRes +
+                if (ppRes < 6) {
+                    PokerInfo wonPP = new PokerInfo();
+                    wonPP.gameRes = "Won Pair Plus";
+                    wonPP.player.updateWinnings(ppWinnings);
+                    sendPokerInfoToClient(wonPP);
+                }
+                else {
+                    PokerInfo wonPP = new PokerInfo();
+                    wonPP.gameRes = "Lost Pair Plus";
+                    wonPP.player.updateWinnings(-pokerInfo.player.getPairPlusBet());
+                    sendPokerInfoToClient(wonPP);
+                }
+
+                callback.accept("Client #" + this.count + " got " + ppStringRes +
                         " from their Pair-Plus, they won $" + ppWinnings +
                         " (profit = $" + (ppWinnings - pokerInfo.player.getPairPlusBet()) + ")");
             }
 
+            PokerInfo updatedPlayer = new PokerInfo();
+            updatedPlayer = pokerInfo;
+            updatedPlayer.player.updateWinnings((ppWinnings - pokerInfo.player.getPairPlusBet()));
+            updatedPlayer.player.setPairPlusBet(0);
+
+            return updatedPlayer;
+        }
+
+        public void sendPokerInfoToClient(PokerInfo pokerInfo) {
+            try {
+                out.writeObject(pokerInfo);
+                out.flush();  // Ensure the data is sent immediately
+            } catch (Exception e) {
+                callback.accept("Error sending PokerInfo to client: " + e.getMessage());
+            }
+        }
+
+        private void processBets(PokerInfo pokerInfo) {
+
+            if (pokerInfo.antePlaced) {
+                callback.accept("Client #" + this.count + " placed an Ante Bet of $" + pokerInfo.player.getAnteBet());
+            }
+            if (pokerInfo.pairPlusPlaced) {
+                callback.accept("Client #" + this.count + " placed an Pair-Plus Bet of $" + pokerInfo.player.getPairPlusBet());
+            }
+
+        }
+
+        // process pp / ante wins
+        private void evaluateWins(ArrayList<Card> playerHand, ArrayList<Card> dealerHand, PokerInfo pokerInfo) {
+
+
             Player updatedPlayer = pokerInfo.player;
 
-            int res = ThreeCardLogic.compareHands(playerHand, dealerHand);
+            int res = ThreeCardLogic.compareHands(dealerHand, playerHand);
 
             String gameRes = "";
             int winnings = 0;
+
             if (res == 0) {
-                callback.accept("Client " + this.count + " and Dealer tied!");
+                callback.accept("Client #" + this.count + " and Dealer tied!");
                 gameRes = "Tie";
-            } else if (res == 1) {
-                callback.accept("Client " + this.count + " lost to dealer!");
-                gameRes = "Dealer Win";
-                winnings = -(pokerInfo.player.getAnteBet());
-            } else {
-                callback.accept("Client " + this.count + " won against dealer!");
-                gameRes = "Player Win";
-                winnings = (pokerInfo.player.getAnteBet());
             }
 
-            updatedPlayer.updateWinnings(winnings + (ppWinnings - pokerInfo.player.getPairPlusBet()));
+            else if (res == 1) {
+                callback.accept("Client #" + this.count + " lost to dealer!");
+                gameRes = "Dealer Win";
+                winnings = -(pokerInfo.player.getAnteBet() * 2);
+            }
+
+            else if (res == 2) {
+                winnings = (pokerInfo.player.getAnteBet());
+                callback.accept("Client #" + this.count + " won against dealer! " +
+                        " (profit = $" + (pokerInfo.player.getAnteBet() * 2) + ")");
+                gameRes = "Player Win";
+            }
+
+            updatedPlayer.updateWinnings(winnings);
 
             // send updated game info
             PokerInfo newInfo = new PokerInfo();
@@ -234,7 +322,6 @@ public class Server {
         }
 
     }
-
 
     // Update the client count label in the controller
     private void updateClientCount() {
@@ -248,8 +335,3 @@ public class Server {
         }
     }
 }
-
-
-
-
-

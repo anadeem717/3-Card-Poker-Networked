@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<VBox spacing="20" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="WelcomePageController">
-    <Text style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;" text="Welcome To THREE CARD POKER" />
-    <VBox spacing="10">
-        <HBox spacing="10">
-            <Label style="-fx-font-size: 14px;" text="Server IP:" />
-            <TextField fx:id="serverIpField" promptText="Enter server IP" style="-fx-background-color: white;" />
+<VBox spacing="20" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="WelcomePageController" alignment="CENTER" id="main-container">
+    <Text fx:id="welcomeText" text="Welcome To Three Card Poker" />
+
+    <VBox spacing="10" alignment="CENTER" id="input-container">
+        <HBox spacing="10" alignment="CENTER">
+            <StackPane>
+                <Rectangle id="input-background" width="250" height="40" arcWidth="15" arcHeight="15" />
+                <HBox spacing="10" alignment="CENTER">
+                    <Label fx:id="serverLabel" text="Server IP:" />
+                    <TextField fx:id="serverIpField" promptText="Enter server IP" />
+                </HBox>
+            </StackPane>
         </HBox>
-        <HBox spacing="10">
-            <Label style="-fx-font-size: 14px;" text="Port:" />
-            <TextField fx:id="portField" promptText="Enter port" style="-fx-background-color: white;" />
+        <HBox spacing="10" alignment="CENTER">
+            <StackPane>
+                <Rectangle id="input-background" width="250" height="40" arcWidth="15" arcHeight="15" />
+                <HBox spacing="10" alignment="CENTER">
+                    <Label fx:id="portLabel" text="Port:" />
+                    <TextField fx:id="portField" promptText="Enter port" />
+                </HBox>
+            </StackPane>
         </HBox>
     </VBox>
-    <Button onAction="#handleConnectToServer" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-size: 16px;" text="Connect to server" />
+
+    <Button fx:id="connectButton" onAction="#handleConnectToServer" text="Connect to server" />
 </VBox>

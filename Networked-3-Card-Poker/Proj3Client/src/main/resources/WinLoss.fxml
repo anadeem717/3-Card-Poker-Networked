@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="WinLoseController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="WinLoseController" style="-fx-background-color: #616161;">
     <center>
         <VBox alignment="CENTER" spacing="15" maxWidth="400">
-            <!-- Message announcing win or loss -->
-            <Label fx:id="resultLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Game Result" />
+            <!-- StackPane to layer the rectangle and text -->
+            <StackPane>
+                <!-- Rectangle for background color -->
+                <Rectangle fx:id="resultBackground" width="300" height="80" arcWidth="10" arcHeight="10" fill="transparent" />
+                <!-- Message announcing win or loss -->
+                <Label fx:id="resultLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Game Result" />
+            </StackPane>
 
             <!-- Display the amount won or lost -->
             <Label fx:id="winningsLabel" style="-fx-font-size: 18px;" text="Winnings: $0" />
 
             <!-- Buttons for playing another game or exiting -->
             <HBox alignment="CENTER" spacing="10">
-                <Button fx:id="playAnotherGameButton" text="Play Again" onAction="#handlePlayAgain" />
-                <Button fx:id="exitButton" text="Exit" onAction="#handleExit" />
+                <Button fx:id="playAnotherGameButton" text="Play Again" onAction="#handlePlayAgain" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #006400; -fx-text-fill: white; -fx-padding: 10 20;" />
+                <Button fx:id="exitButton" text="Exit" onAction="#handleExit" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #8B0000; -fx-text-fill: white; -fx-padding: 10 20;" />
             </HBox>
         </VBox>
     </center>

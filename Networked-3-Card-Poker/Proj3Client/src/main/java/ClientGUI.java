@@ -29,7 +29,14 @@ public class ClientGUI extends Application {
         welcomePageController = loader.getController();
         welcomePageController.setClientGUI(this);
 
-        primaryStage.setScene(new Scene(root, 800, 600));
+        Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("welcome.css").toExternalForm()); // Add the stylesheet here
+
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
@@ -81,10 +88,13 @@ public class ClientGUI extends Application {
         gameplayController.setClientGUI(this);
         gameplayController.setConnection(out);
 
-        primaryStage.setScene(new Scene(gameRoot, 800, 600));
+        Scene gameplayScene = new Scene(gameRoot, 1400, 800);
+        gameplayScene.getStylesheets().add(getClass().getResource("gameplay.css").toExternalForm());
+
+        primaryStage.setScene(gameplayScene);
     }
 
-    public void showWinLoseScene(boolean isWin, int winnings) {
+    public void showWinLoseScene(boolean isWin, Player player) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("WinLoss.fxml"));
             Parent winLoseRoot = loader.load();
@@ -92,9 +102,9 @@ public class ClientGUI extends Application {
 
             Scene gameplayScene = primaryStage.getScene(); // Save current gameplay scene
             winLoseController.setPrimaryStage(primaryStage, gameplayController,gameplayScene);
-            winLoseController.showResult(isWin, winnings);
+            winLoseController.showResult(isWin, player);
 
-            primaryStage.setScene(new Scene(winLoseRoot, 800, 600));
+            primaryStage.setScene(new Scene(winLoseRoot, 1400, 800));
             primaryStage.setTitle("Game Over");
         } catch (IOException e) {
             System.err.println("Error switching to win/lose scene: " + e.getMessage());

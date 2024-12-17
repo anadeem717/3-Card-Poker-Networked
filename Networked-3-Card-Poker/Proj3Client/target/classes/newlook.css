@@ -1,0 +1,72 @@
+/* General styling */
+.root {
+    -fx-background-color: #6c6c6c; /* Light gray background */
+    -fx-font-family: 'Arial Black', 'Arial', sans-serif; /* More noticeable font */
+}
+
+.button {
+    -fx-background-color: #ff0000; /* Red buttons */
+    -fx-text-fill: #000000;
+    -fx-font-size: 10px; /* Reduced font size */
+    -fx-font-weight: bold; /* Make the button text bold */
+}
+
+.button:hover {
+    -fx-background-color: #af0005; /* Darker red on hover */
+}
+
+.text {
+    -fx-font-size: 10px; /* Reduced font size */
+    -fx-font-weight: bold; /* Make the text bold */
+}
+
+/* Styling for the content box */
+.content-box {
+    -fx-background-color: #6c6c6c; /* Matches the root background */
+    -fx-padding: 10px; /* Optional padding for spacing */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-effect: dropshadow(gaussian, #000000, 5, 0.5, 0, 0); /* Optional shadow for emphasis */
+}
+
+/* Styling for the menu bar */
+.menu-bar {
+    -fx-background-color: #ffffff; /* Match the root background */
+}
+
+/* Styling for text fields */
+.white-text-field {
+    -fx-text-fill: white; /* Set text in fields to white */
+    -fx-background-color: transparent; /* Make the background transparent */
+    -fx-border-color: white; /* Set border color to white */
+    -fx-border-radius: 5px; /* Optional rounded borders */
+    -fx-font-size: 10px; /* Reduced font size */
+    -fx-font-weight: bold; /* Make the text bold */
+}
+
+/* Styling specific to the newLook menu item */
+.menu-item#newLookMenuItem {
+    -fx-font-size: 16px; /* Reduced font size */
+    -fx-text-fill: #000000; /* Set text color to black */
+    -fx-padding: 5px 15px; /* Add padding for better centering */
+    -fx-alignment: center; /* Center the text */
+    -fx-font-weight: bold; /* Make the text bold */
+}
+
+/* Styling for menu items */
+.menu-item {
+    -fx-text-fill: #000000; /* Set text color to black */
+    -fx-font-size: 12px; /* Reduced font size */
+    -fx-font-weight: bold; /* Make the text bold */
+}
+
+/* Styling for VBox containers */
+.content-box, .action-buttons-box, .bet-options-box {
+    -fx-background-color: #6c6c6c; /* Matches the root background */
+    -fx-padding: 10px; /* Optional padding for spacing */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-effect: dropshadow(gaussian, #000000, 5, 0.5, 0, 0); /* Optional shadow for emphasis */
+}
+
+.custom-text-field {
+    -fx-font-size: 10px; /* Set the desired font size */
+}

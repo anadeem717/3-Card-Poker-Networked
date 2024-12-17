@@ -4,6 +4,7 @@ import java.util.Collections;
 public class ThreeCardLogic {
 
     // Method that evaluates the given hand's value
+    // 1 is best, 6 is worst
     public static int evalHand(ArrayList<Card> hand) {
         // Check straight flush (1)
         if (isStraight(hand) && isFlush(hand)) return 1;
@@ -20,8 +21,8 @@ public class ThreeCardLogic {
         // Check pair (5)
         if (isPair(hand)) return 5;
 
-        // High card (0)
-        return 0;
+        // High card (6)
+        return 6;
     }
 
     // Method to evaluate pair plus winnings
@@ -45,7 +46,7 @@ public class ThreeCardLogic {
 
         // If both hands are of the same type
         if (dealerVal == playerVal) {
-            if (dealerVal == 4 || dealerVal == 0) { // Flush or High Card case
+            if (dealerVal == 4 || dealerVal == 6) { // Flush or High Card case
                 return compareHighCards(dealer, player); // Compare high cards
             }
 
@@ -71,7 +72,7 @@ public class ThreeCardLogic {
         }
 
         // If hands have different types, higher value wins
-        if (dealerVal > playerVal) return 1; // Dealer wins
+        if (dealerVal < playerVal) return 1; // Dealer wins
         else return 2; // Player wins
     }
 
@@ -215,7 +216,7 @@ public class ThreeCardLogic {
         int highestCardValue = 0;
 
         // case better than a high card
-        if (evalHand(hand) > 0) return true;
+        if (evalHand(hand) < 6) return true;
 
         for (Card card : hand) {
             if (card.value > highestCardValue) {

@@ -9,6 +9,7 @@ public class Player implements Serializable {
     private int pairPlusBet;      // pair plus wager
     private int totalWinnings;    // total winnings across games
 
+
     // No-Argument Constructor
     public Player() {
         this.hand = new ArrayList<>();

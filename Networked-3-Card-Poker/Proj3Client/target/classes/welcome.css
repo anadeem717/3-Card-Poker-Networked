@@ -1,0 +1,37 @@
+/* Main container */
+#main-container {
+    -fx-background-color: #6c6c6c; /* Background color */
+}
+
+/* Text styling */
+#welcomeText {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white; /* Text color */
+}
+
+/* Input container styling */
+#input-container {
+    -fx-alignment: center;
+}
+
+/* Styling for rectangles behind input fields */
+#input-background {
+    -fx-fill: #a5a5a5; /* Background color */
+    -fx-stroke: #000000; /* Border color */
+    -fx-stroke-width: 2; /* Border width */
+}
+
+/* Label styling */
+#serverLabel, #portLabel {
+    -fx-font-size: 12px;
+    -fx-text-fill: black; /* Text color */
+}
+
+/* Button styling */
+#connectButton {
+    -fx-background-color: #0b9c01; /* Button background color */
+    -fx-text-fill: #000000; /* Button text color */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
