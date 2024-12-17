@@ -8,6 +8,8 @@ This is a Java-based networked implementation of a 3-Card Poker game. The projec
 ## Prerequisites
 1. **Java Development Kit (JDK)**: Ensure JDK 8 or higher is installed on your system.
 2. **Environment Variables**: Set `JAVA_HOME` and add the `bin` directory to your `PATH`.
+3. **Apache Maven** Install Apache Maven to build the project
+   
 
 ## Running the Project
 Follow these steps to set up and run the server and client.
