@@ -44,7 +44,7 @@ Follow these steps to set up and run the server and client.
    ```bash
    mvn exec:java
    ```
-4. When prompted, enter the server's IP address and the port number (default: `5000`).
+4. When prompted, enter the server's IP address and the port number
 
 ### Note
 Ensure the client and server are running on the same port.
